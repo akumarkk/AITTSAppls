@@ -70,6 +70,7 @@ async def generate_tts(data: dict, voice: str = "tara"):
         return_tensors="pt",
         truncation=True, 
         max_length=2048).to(DEVICE)
+    print("tokenizer request received : ", full_prompt)
     
     with torch.no_grad():
         # Generate audio tokens
@@ -80,6 +81,8 @@ async def generate_tts(data: dict, voice: str = "tara"):
             temperature=0.7,
             repetition_penalty=1.1
         )
+
+        print("generate request received : ", full_prompt)
         
         # Extract only the newly generated audio tokens
         # Note: In Orpheus, audio tokens typically start after a specific offset
