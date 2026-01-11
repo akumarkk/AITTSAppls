@@ -63,13 +63,13 @@ async def generate_tts(data: dict, voice: str = "tara"):
     print(full_prompt)
     
     test = torch.ones(1).to(DEVICE)
-print("Device is reachable")
+    print("Device is reachable")
 
     inputs = tokenizer(
         full_prompt, 
-    return_tensors="pt",
-    truncation=True, 
-    max_length=2048).to(DEVICE)
+        return_tensors="pt",
+        truncation=True, 
+        max_length=2048).to(DEVICE)
     
     with torch.no_grad():
         # Generate audio tokens
