@@ -10,7 +10,7 @@ export class LocalTtsService {
 
   constructor(private http: HttpClient) {}
 
-  async speak(text: string, voice: string = 'tara'): Promise<string> {
+  async getAudio(text: string, voice: string = 'tara'): Promise<string> {
     const body = {
       model: "orpheus",
       input: text,

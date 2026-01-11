@@ -39,7 +39,7 @@ export class AppComponent {
   async speak() {
     this.loading.set(true);
     try {
-      const blob = await this.ttsService.speak(this.text);
+      const blob = await this.ttsService.getAudio(this.text);
       const url = URL.createObjectURL(blob);
       this.audioUrl.set(url);
     } catch (error) {
