@@ -1,6 +1,6 @@
 // src/app/app.component.ts
 import { Component, signal } from '@angular/core';
-import { TtsService } from './services/tts.service';
+import { LocalTtsService } from './services/tts.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -34,7 +34,7 @@ export class AppComponent {
   audioUrl = signal<string | null>(null);
   loading = signal(false);
 
-  constructor(private ttsService: TtsService) {}
+  constructor(private ttsService: LocalTtsService) {}
 
   async speak() {
     this.loading.set(true);
