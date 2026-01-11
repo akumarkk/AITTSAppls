@@ -40,6 +40,12 @@ def reconstruct_snac_codes(flattened_codes):
 
 @app.post("/generate")
 async def generate_tts(text: str, voice: str = "tara"):
+    text = data.get("input", "")
+    voice = data.get("voice", "tara")
+    
+    # Orpheus prompt format
+    full_prompt = f"{voice}: {text}"
+    inputs = tokenizer(full_prompt, return_tensors="pt").to(DEVICE)
     # Orpheus uses a specific prompt format for voices
     # Example: "tara: Hello, how are you today?"
     full_prompt = f"{voice}: {text}"

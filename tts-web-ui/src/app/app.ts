@@ -39,9 +39,9 @@ export class AppComponent {
   async speak() {
     this.loading.set(true);
     try {
-      const blob = await this.ttsService.getAudio(this.text);
-      const url = URL.createObjectURL(blob);
-      this.audioUrl.set(url);
+      const audioUrlString = await this.ttsService.getAudio(this.text);
+      // const audioUrlString = URL.createObjectURL(blob as Blob);
+      this.audioUrl.set(audioUrlString);
     } catch (error) {
       console.error('TTS Error:', error);
       alert('Failed to generate speech.');

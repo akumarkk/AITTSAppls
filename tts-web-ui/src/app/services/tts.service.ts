@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class LocalTtsService {
   // Use /api/v1 because of our proxy configuration
-  private apiUrl = '/api/v1/audio/speech';
+  private apiUrl = 'http://localhost:7878/generate';
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +22,9 @@ export class LocalTtsService {
       this.http.post(this.apiUrl, body, { responseType: 'blob' })
     );
 
+    // const audioBlob = new Blob([blob], { type: 'audio/wav' });
+
     // Create a local URL for the audio player
-    return URL.createObjectURL(blob);
+    return URL.createObjectURL(blob as Blob);
   }
 }
