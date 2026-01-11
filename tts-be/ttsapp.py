@@ -27,6 +27,17 @@ model = AutoModelForCausalLM.from_pretrained(
 # 2. Load SNAC Audio Decoder
 snac_model = SNAC.from_pretrained(SNAC_PATH, local_files_only=True).to(DEVICE).eval()
 
+def reconstruct_snac_codes(flattened_codes):
+    """Orpheus outputs 7 tokens per frame. SNAC expects 4 hierarchical layers."""
+    # Logic: Layer 1 (1x), Layer 2 (2x), Layer 3 (4x) = 7 tokens per chunk
+    codes_l1 = flattened_codes[0::7].unsqueeze(0)       # 1 token
+    codes_l2 = flattened_codes[1::7].unsqueeze(0)       # 2 tokens (interleaved)
+    codes_l2_alt = flattened_codes[4::7].unsqueeze(0)
+    codes_l3 = flattened_codes[2::7].unsqueeze(0)       # 4 tokens (interleaved)
+    # ... Simplified reshaping for SNAC 24khz (3-4 layers)
+    # Most Orpheus implementations use a specific helper or slicing:
+    return [codes_l1, torch.stack([codes_l2, codes_l2_alt], dim=2).flatten(1,2), ...]
+
 @app.post("/generate")
 async def generate_tts(text: str, voice: str = "tara"):
     # Orpheus uses a specific prompt format for voices
@@ -65,4 +76,4 @@ async def generate_tts(text: str, voice: str = "tara"):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=7878)
