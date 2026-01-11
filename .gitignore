@@ -1,0 +1,55 @@
+# ==========================================
+# Python / Orpheus Backend
+# ==========================================
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.pytest_cache/
+
+# Large Model Files (Orpheus/Llama weights)
+# These are several GBs; do not commit them!
+models/
+*.gguf
+*.bin
+*.pt
+*.safetensors
+canopy-datasets/
+
+# ==========================================
+# Angular Frontend
+# ==========================================
+node_modules/
+dist/
+tmp/
+out-files/
+.sass-cache/
+connect.lock
+coverage/
+libpeerconnection.log
+
+# Angular CLI build info
+.angular/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==========================================
+# OS / Misc
+# ==========================================
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Generated Audio Files
+*.wav
+*.mp3
