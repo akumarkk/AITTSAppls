@@ -4,9 +4,18 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from snac import SNAC
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows Angular to connect
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Configuration
 MODEL_ID = "canopylabs/orpheus-3b-0.1-ft"
@@ -17,6 +26,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # 1. Load Tokenizer and Model
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, local_files_only=True)
+tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_PATH, 
     torch_dtype=torch.bfloat16, 
@@ -39,18 +49,27 @@ def reconstruct_snac_codes(flattened_codes):
     return [codes_l1, torch.stack([codes_l2, codes_l2_alt], dim=2).flatten(1,2), ...]
 
 @app.post("/generate")
-async def generate_tts(text: str, voice: str = "tara"):
+async def generate_tts(data: dict, voice: str = "tara"):
     text = data.get("input", "")
     voice = data.get("voice", "tara")
     
     # Orpheus prompt format
     full_prompt = f"{voice}: {text}"
+    print("request received : ", full_prompt)
     inputs = tokenizer(full_prompt, return_tensors="pt").to(DEVICE)
     # Orpheus uses a specific prompt format for voices
     # Example: "tara: Hello, how are you today?"
     full_prompt = f"{voice}: {text}"
+    print(full_prompt)
     
-    inputs = tokenizer(full_prompt, return_tensors="pt").to(DEVICE)
+    test = torch.ones(1).to(DEVICE)
+print("Device is reachable")
+
+    inputs = tokenizer(
+        full_prompt, 
+    return_tensors="pt",
+    truncation=True, 
+    max_length=2048).to(DEVICE)
     
     with torch.no_grad():
         # Generate audio tokens
@@ -78,6 +97,7 @@ async def generate_tts(text: str, voice: str = "tara"):
     output_path = "speech.wav"
     sf.write(output_path, audio_waveform.cpu().numpy().squeeze(), 24000)
     
+    print("response : ", output_path)
     return FileResponse(output_path, media_type="audio/wav")
 
 if __name__ == "__main__":

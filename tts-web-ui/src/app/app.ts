@@ -40,6 +40,7 @@ export class AppComponent {
     this.loading.set(true);
     try {
       const audioUrlString = await this.ttsService.getAudio(this.text);
+      console.log(`audioUrlString ${audioUrlString}`);
       // const audioUrlString = URL.createObjectURL(blob as Blob);
       this.audioUrl.set(audioUrlString);
     } catch (error) {
