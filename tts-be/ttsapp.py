@@ -11,18 +11,21 @@ app = FastAPI()
 # Configuration
 MODEL_ID = "canopylabs/orpheus-3b-0.1-ft"
 SNAC_ID = "hubertsiuzdak/snac_24khz"
+SNAC_PATH = r"./snac/snac_24khz"
+MODEL_PATH = r"./orpheus-3b-0.1-ft"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # 1. Load Tokenizer and Model
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, local_files_only=True)
 model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID, 
+    MODEL_PATH, 
     torch_dtype=torch.bfloat16, 
-    device_map="auto"
+    device_map="auto",
+    local_files_only=True
 )
 
 # 2. Load SNAC Audio Decoder
-snac_model = SNAC.from_pretrained(SNAC_ID).to(DEVICE).eval()
+snac_model = SNAC.from_pretrained(SNAC_PATH, local_files_only=True).to(DEVICE).eval()
 
 @app.post("/generate")
 async def generate_tts(text: str, voice: str = "tara"):
